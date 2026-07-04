@@ -1,3 +1,4 @@
+import urllib.request  # soundata bug workaround: import urllib submodule before soundata loads it
 import soundata
 
 DATA_HOME = "data/urbansound8k"
