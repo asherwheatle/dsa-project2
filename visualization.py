@@ -18,6 +18,7 @@ def main():
     spectrogram, sr = get_spectrogram(audio_path)
     print("Spectrogram shape:", spectrogram.shape)
 
+    k = int(input("# of peaks to extract (k): "))
     db_spectrogram = librosa.amplitude_to_db(spectrogram, ref=np.max)
 
     fig, (top_graph, bottom_graph) = plt.subplots(2, 1, figsize=(9, 8))
@@ -32,7 +33,7 @@ def main():
     peak_amplitude_db = peak_amplitude_db + 130
     times = librosa.frames_to_time(np.arange(len(peak_amplitude_db)), sr=sr)
 
-    peaks = top_k_peaks(spectrogram, k=20)
+    peaks = top_k_peaks(spectrogram, k=k)
     for amp, f, t in peaks:
         peak_time_s = times[t]
         peak_amp_value = peak_amplitude_db[t]
