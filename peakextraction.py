@@ -1,8 +1,43 @@
 import argparse
-import heapq
 import numpy as np
 import librosa
 import soundata
+
+
+def _sift_up(heap, i):
+    while i > 0:
+        parent = (i - 1) // 2
+        if heap[i] < heap[parent]:
+            heap[i], heap[parent] = heap[parent], heap[i]
+            i = parent
+        else:
+            break
+
+
+def _sift_down(heap, i):
+    n = len(heap)
+    while True:
+        smallest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        if left < n and heap[left] < heap[smallest]:
+            smallest = left
+        if right < n and heap[right] < heap[smallest]:
+            smallest = right
+        if smallest == i:
+            break
+        heap[i], heap[smallest] = heap[smallest], heap[i]
+        i = smallest
+
+
+def _heap_push(heap, item):
+    heap.append(item)
+    _sift_up(heap, len(heap) - 1)
+
+
+def _heap_replace(heap, item):
+    heap[0] = item
+    _sift_down(heap, 0)
 
 DATA_HOME = "data/urbansound8k"
 
@@ -39,9 +74,9 @@ def top_k_peaks(spectrogram, k=10):
 
             val = spectrogram[f, t]
             if len(heap) < k:
-                heapq.heappush(heap, (val, f, t))
+                _heap_push(heap, (val, f, t))
             elif val > heap[0][0]:
-                heapq.heapreplace(heap, (val, f, t))
+                _heap_replace(heap, (val, f, t))
 
     return sorted(heap, reverse=True)
 
