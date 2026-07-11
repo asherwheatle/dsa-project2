@@ -19,6 +19,7 @@ def main():
     print("Spectrogram shape:", spectrogram.shape)
 
     k = int(input("# of peaks to extract (k): "))
+    threshold = float(input("Amplitude threshold (dB): "))
     db_spectrogram = librosa.amplitude_to_db(spectrogram, ref=np.max)
 
     fig, (top_graph, bottom_graph) = plt.subplots(2, 1, figsize=(9, 8))
@@ -37,12 +38,13 @@ def main():
     for amp, f, t in peaks:
         peak_time_s = times[t]
         peak_amp_value = peak_amplitude_db[t]
-        bottom_graph.plot(peak_time_s, peak_amp_value, "o", markerfacecolor="none", markeredgecolor="red")
+        if peak_amp_value >= threshold:
+            bottom_graph.plot(peak_time_s, peak_amp_value, "o", markerfacecolor="none", markeredgecolor="red")
 
   
 
     bottom_graph.plot(times, peak_amplitude_db, color="blue", label="Peak amplitude (dB)")
-    bottom_graph.axhline(120, color="red", linestyle="--", label="Mic Max (120 dB)")
+    bottom_graph.axhline(threshold, color="red", linestyle="--", label=f"Threshold ({threshold:.0f} dB)")
     bottom_graph.set_title("Peak Amplitude Over Time")
     bottom_graph.set_xlabel("Time (s)")
     bottom_graph.set_ylabel("Amplitude (dB)")
