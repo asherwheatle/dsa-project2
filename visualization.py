@@ -4,7 +4,7 @@ import librosa
 import librosa.display
 import soundata
 
-from peakextraction import get_spectrogram, DATA_HOME
+from peakextraction import get_spectrogram, top_k_peaks, DATA_HOME
 
 def getSampleAudioPath():
     dataset = soundata.initialize("urbansound8k", data_home=DATA_HOME)
@@ -26,10 +26,19 @@ def main():
     top_graph.set_title("Spectrogram")
     fig.colorbar(img, ax=top_graph, format="%+2.0f dB")
 
+
     peak_amplitude = spectrogram.max(axis=0)
     peak_amplitude_db = librosa.amplitude_to_db(peak_amplitude, ref=np.max)
     peak_amplitude_db = peak_amplitude_db + 130
     times = librosa.frames_to_time(np.arange(len(peak_amplitude_db)), sr=sr)
+
+    peaks = top_k_peaks(spectrogram, k=20)
+    for amp, f, t in peaks:
+        peak_time_s = times[t]
+        peak_amp_value = peak_amplitude_db[t]
+        bottom_graph.plot(peak_time_s, peak_amp_value, "o", markerfacecolor="none", markeredgecolor="red")
+
+  
 
     bottom_graph.plot(times, peak_amplitude_db, color="blue", label="Peak amplitude (dB)")
     bottom_graph.axhline(120, color="red", linestyle="--", label="Mic Max (120 dB)")
