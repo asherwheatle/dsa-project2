@@ -20,3 +20,6 @@ python visualization.py (you can choose the top-k peaks and the threshold when r
 
 python .\peakextraction.py --k 5 (default is 10)
 
+# to get visualization
+
+python visualization.py (u can choose k peaks, threshold, and segment tree to find peak from there)
