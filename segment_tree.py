@@ -32,6 +32,11 @@ class SegmentTree:
             r >>= 1
         return best
 
+    def range_max_index(self, l, r):
+        if l < 0 or r >= self.n or l > r:
+            raise IndexError(f"invalid interval [{l}, {r}] for size {self.n}")
+        return int(l + np.argmax(self.values[l:r + 1]))
+
     def peak_above(self, l, r, threshold):
         return self.range_max(l, r) > threshold
 
